@@ -1,2 +1,5 @@
 requests>=2.31
 python-dotenv>=1.0
+langgraph>=0.2
+openai>=1.0
+-r ehr-explorer/backend/requirements.txt

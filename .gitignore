@@ -4,3 +4,23 @@ logs/
 __pycache__/
 *.pyc
 .DS_Store
+
+# Local credentials
+.env.*
+!.env.example
+
+# EHR Explorer dependencies, builds, and databases
+node_modules/
+dist/
+ehr-explorer/data/
+*.db
+*.db-*
+
+# EHR Attacker generated output
+ehr-attacker/runs/
+ehr-attacker/benchmark/scorecard.json
+ehr-attacker/benchmark/bench_report.md
+
+# Test and tool caches
+.pytest_cache/
+*.tsbuildinfo
