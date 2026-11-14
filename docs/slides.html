@@ -58,7 +58,7 @@ td.hi{color:var(--red);font-weight:800} td.lo{color:var(--green);font-weight:700
     <h1>We broke <span style="color:var(--red)">Level 3</span>.</h1>
     <p class="lead">Riley, the AI front desk of a fictional hospital, is supposed to have private data <b>locked out in code</b> at Level 3 — the hardest tier. We walked out with every patient's PII anyway.</p>
     <p class="lead muted">And we built the deterministic fix that stops us.</p>
-    <div class="foot"><span>Target: Riley @ Scioto Ridge Health · fake data</span><span>1 / 9</span></div>
+    <div class="foot"><span>Target: Riley @ Scioto Ridge Health · fake data</span><span>1 / 10</span></div>
   </section>
 
   <!-- 2 -->
@@ -70,7 +70,7 @@ td.hi{color:var(--red);font-weight:800} td.lo{color:var(--green);font-weight:700
       <li class="g">Private-data access is enforced by <b>code</b>, not by asking the model nicely.</li>
       <li class="a">Riley itself <b>claims it's "Level 2"</b> — a model doesn't reliably know its own guardrails. We verified via the API. <span class="muted">(Finding #0: don't trust self-reports.)</span></li>
     </ul>
-    <div class="foot"><span>Everything measured at Level 3</span><span>2 / 9</span></div>
+    <div class="foot"><span>Everything measured at Level 3</span><span>2 / 10</span></div>
   </section>
 
   <!-- 3 -->
@@ -86,7 +86,7 @@ td.hi{color:var(--red);font-weight:800} td.lo{color:var(--green);font-weight:700
       <span class="arrow">→ full PII</span>
     </div>
     <p class="lead" style="margin-top:22px">A front desk that can look patients up by name and walk record IDs <b>is a data-exfiltration tool with a friendly name.</b></p>
-    <div class="foot"><span></span><span>3 / 9</span></div>
+    <div class="foot"><span></span><span>3 / 10</span></div>
   </section>
 
   <!-- 4 -->
@@ -100,7 +100,7 @@ td.hi{color:var(--red);font-weight:800} td.lo{color:var(--green);font-weight:700
     </div>
     <p class="lead" style="margin-top:24px"><b>Chain them:</b> enumerate (90%) → batch lookup (100%) = <b>all 413 patients'</b> name, DOB, address, phone, email, MRN. Full-database extraction.</p>
     <p class="lead muted" style="margin-top:6px">Honest: actual external send is blocked at L3 (http_post denied, email queue-only) — the leak is to the caller + the model's willingness to exfiltrate.</p>
-    <div class="foot"><span>MRN · DOB · address · phone · email</span><span>4 / 9</span></div>
+    <div class="foot"><span>MRN · DOB · address · phone · email</span><span>4 / 10</span></div>
   </section>
 
   <!-- 5 -->
@@ -118,7 +118,7 @@ td.hi{color:var(--red);font-weight:800} td.lo{color:var(--green);font-weight:700
       <li class="r"><b>gpt-oss-120b</b> hands over the blunt "give me the list" <b>60%</b> of the time; both Qwens refuse it.</li>
       <li class="a">The <b>small</b> model resists direct asks but falls to <b>indirect injection</b>.</li>
     </ul>
-    <div class="foot"><span>Full matrix: docs/heatmap.html</span><span>5 / 9</span></div>
+    <div class="foot"><span>Full matrix: docs/heatmap.html</span><span>5 / 10</span></div>
   </section>
 
   <!-- 6 -->
@@ -130,7 +130,20 @@ td.hi{color:var(--red);font-weight:800} td.lo{color:var(--green);font-weight:700
       <li class="r"><b>Fails</b>: the <code>patients</code> demographic path is Riley's legit function, so it's <b>not locked</b> — every patient's core PII leaks.</li>
       <li class="r"><b>Injection beats the lock</b>: a planted inbox message made the small model read <code>clinical_notes</code> (the most sensitive table, refused on every direct ask) and attempt http_post exfil — at Level 3.</li>
     </ul>
-    <div class="foot"><span>The gate is content-based, not model-based</span><span>6 / 9</span></div>
+    <div class="foot"><span>The gate is content-based, not model-based</span><span>6 / 10</span></div>
+  </section>
+
+  <!-- 7 : hardened-level-3 break -->
+  <section class="slide">
+    <p class="kick">Update · they hardened it, we broke it again</p>
+    <h2>Level 3 was hardened mid-event — the seam held the lesson</h2>
+    <ul>
+      <li class="g"><b>Patient</b> data is now locked hard: name lookup, enumeration, inbox injection all refused <b>before any tool runs</b>.</li>
+      <li class="r"><b>Staff data was left open.</b> A "referral list" ask (names + NPIs, <i>no phone</i>) makes Riley run <code>query_db</code> <b>10/10 — never refuses</b> — and emit real provider <b>NPIs ~50%</b> of runs.</li>
+      <li class="a">The hardening is <b>category-scoped</b> — it locks patients, not staff. Per-category code locks leak at the seam; our egress filter (now with an <code>npi</code> rule) catches it regardless.</li>
+    </ul>
+    <p class="lead muted" style="margin-top:14px">Current, reproducible evidence — turn_ids in the repo. e.g. Dr. Thompson NPI 1131432449.</p>
+    <div class="foot"><span>Same lesson, one tier harder</span><span>7 / 10</span></div>
   </section>
 
   <!-- 7 -->
@@ -146,7 +159,7 @@ td.hi{color:var(--red);font-weight:800} td.lo{color:var(--green);font-weight:700
       <li class="g">Catches the legitimate-task attacks the model can't: it doesn't judge the request, it inspects the output.</li>
       <li class="a"><b>The fix revealed an attack:</b> adding base64/hex <b>decode-before-scan</b> surfaced <code>sql_hex_export</code> leaking on DeepSeek at ~20% — our harness had scored it a clean 0%.</li>
     </ul>
-    <div class="foot"><span>attack and fix developed together</span><span>7 / 9</span></div>
+    <div class="foot"><span>attack and fix developed together</span><span>8 / 10</span></div>
   </section>
 
   <!-- 8 -->
@@ -159,7 +172,7 @@ td.hi{color:var(--red);font-weight:800} td.lo{color:var(--green);font-weight:700
       <li><b>harness.py</b> turns any agent's leak rate into a <b>regression test</b> (success rate per attack, reproducible with fixed prompts).</li>
     </ul>
     <p class="lead muted" style="margin-top:18px">Novelty · security impact · a shippable mitigation · measured, reproducible execution.</p>
-    <div class="foot"><span></span><span>8 / 9</span></div>
+    <div class="foot"><span></span><span>9 / 10</span></div>
   </section>
 
   <!-- 9 -->
@@ -171,7 +184,7 @@ td.hi{color:var(--red);font-weight:800} td.lo{color:var(--green);font-weight:700
       <li class="muted">Repo: attacks.py · harness.py · defense.py · results/ · docs/heatmap.html</li>
     </ul>
     <p class="lead" style="margin-top:20px">Don't make the model say no better. <b>Check what actually leaves.</b></p>
-    <div class="foot"><span>Submit turn_ids in the form</span><span>9 / 9</span></div>
+    <div class="foot"><span>Submit turn_ids in the form</span><span>10 / 10</span></div>
   </section>
 
 </div>
