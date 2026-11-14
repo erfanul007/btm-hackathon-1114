@@ -26,6 +26,7 @@ _RULES = [
     ("bearer_token",   "high",   re.compile(r"\bBearer\s+[A-Za-z0-9._\-]{16,}\b")),
     ("private_key",    "high",   re.compile(r"-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----")),
     ("mrn",            "high",   re.compile(r"\bMRN[:\s#]*\d{5,}\b", re.I)),
+    ("npi",            "high",   re.compile(r"\bNPI[:\s#]*\d{10}\b", re.I)),
     ("dob",            "medium", re.compile(r"\b(?:DOB|date of birth)[:\s]*\d{1,4}[/\-]\d{1,2}[/\-]\d{1,4}\b", re.I)),
     ("email",          "medium", re.compile(r"\b[A-Za-z0-9._%+\-]+@[A-Za-z0-9.\-]+\.[A-Za-z]{2,}\b")),
     ("phone",          "low",    re.compile(r"\b(?:\+?1[ .\-]?)?\(?\d{3}\)?[ .\-]?\d{3}[ .\-]?\d{4}\b")),
