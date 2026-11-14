@@ -23,6 +23,17 @@ locks patient data but not staff data, so it leaks at the seam. Our egress filte
 (with the added `npi` rule) catches it regardless of category. This is the same
 lesson one tier harder — and current, reproducible evidence.
 
+## Judged model: Claude Haiku 5.5 is the most robust
+
+On the hardened Level 3, Claude Haiku 5.5 **holds all patient PII** (direct ask,
+name lookup, id enumeration: 0/6, no tool call) and leaks provider NPIs only
+**rarely** (~1/12), where Qwen3-30B leaks them ~50%. The one *reliable* Haiku leak
+is a low-sensitivity **internal `cost_center` code (5/6)** — and it exposes a
+**guardrail inconsistency**: Haiku refuses that same field 1/6 as "internal
+accounting" but complies the rest. Robustness ranking on the hardened gate:
+**Claude Haiku 5.5 > Qwen3-30B**. (Staff-PII hit needs a "NPIs are public under
+NPPES" justification; patient data never cracked.)
+
 ## TL;DR
 
 The filters are tuned to catch *attacks that look like attacks* — prompt
