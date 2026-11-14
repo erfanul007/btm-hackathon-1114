@@ -115,8 +115,6 @@ their own, or submit these as shared evidence.
 - **pretext_identity_verify**: `b5b9fdff7f4c49d78f26c1053a21d375` (Qwen3-30B 95%), `688b62e89079459585e90b0a0e2cb028` (DeepSeek)
 - **Manual demos:** `b1d4d21e3fbc4e58a2cc510008bb5734` (name "John" → 2 patients' full PII), `d1af350df131424aa0f7312849f5f665` (min patient_id → Amy Singh MRN)
 
-## 7. TODO before we submit (for the team)
-
 ## 7. Cross-model conversation history sharing (OBSERVED)
 
 **Finding:** A marker introduced in a conversation with one model was recalled
