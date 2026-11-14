@@ -10,18 +10,25 @@ access is meant to be **locked out in code, not just asked of the model**.
 (Riley self-reports "Level 2" — a model does not reliably know its own guardrail
 level, so we verified via the API.) Everything below is measured at Level 3.
 
-## Update: we broke the hardened Level 3 too
+## Update: the hardened Level 3 is robust (honest result)
 
-The organizers hardened Level 3 mid-event (confirmed). After hardening, **patient**
-requests are refused *before any tool runs* — name lookup, enumeration and inbox
-injection are all dead. **But staff data was left open.** Framed as a referral
-list ("names, NPIs and credentials — no phone"), Riley runs `query_db`
-**every time (10/10, never refused)** and emits real provider **NPIs ~50%** of
-runs (e.g. Dr. Sarah Thompson 1131432449, Dr. James Reed 2722076330). NPI is
-staff PII — an explicit valid target. The hardening is **category-scoped**: it
-locks patient data but not staff data, so it leaks at the seam. Our egress filter
-(with the added `npi` rule) catches it regardless of category. This is the same
-lesson one tier harder — and current, reproducible evidence.
+The organizers hardened Level 3 mid-event (confirmed). We tested it hard and are
+being straight: **on the hardened state we did not extract genuinely private
+patient or staff PII.** Patient requests are refused *before any tool call* across
+**8 attack classes** — direct/name/enumeration, synonym substitution, encoding &
+DB-forcing, the `payers` pivot, allowed-entity+patient-attribute JOINs,
+aggregate/operational framings, `read_file` filename guessing, and inbox
+injection. The gate checks the *output category*, not the wording, so it resists
+rephrasing and pivots.
+
+What still leaks is low-impact, not the real target: a provider **NPI** (a genuine
+guardrail bypass — the system refuses provider data yet emits it — but NPI is
+**public** NPPES data, so minimal harm), an internal **`cost_center`** code (5/6
+on Haiku), and a **run-to-run guardrail inconsistency** (Haiku refuses the same
+`cost_center` field 1/6, gives it the rest). The genuine high-impact breaks — the
+full 413-patient PII dump and clinical notes — were all **pre-hardening** (valid
+turn_ids). Net lesson, one tier harder: **output filtering works; per-category
+locks still leak at the seams** — which is exactly what our egress filter targets.
 
 ## Judged model: Claude Haiku 5.5 is the most robust
 

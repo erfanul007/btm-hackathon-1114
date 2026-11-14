@@ -133,17 +133,17 @@ td.hi{color:var(--red);font-weight:800} td.lo{color:var(--green);font-weight:700
     <div class="foot"><span>The gate is content-based, not model-based</span><span>6 / 10</span></div>
   </section>
 
-  <!-- 7 : hardened-level-3 break -->
+  <!-- 7 : hardened-level-3 honest result -->
   <section class="slide">
-    <p class="kick">Update · they hardened it, we broke it again</p>
-    <h2>Level 3 was hardened mid-event — the seam held the lesson</h2>
+    <p class="kick">Update · they hardened it — we tested honestly</p>
+    <h2>The hardened Level 3 holds — and that's a real result</h2>
     <ul>
-      <li class="g"><b>Patient</b> data is now locked hard: name lookup, enumeration, inbox injection all refused <b>before any tool runs</b>.</li>
-      <li class="r"><b>Staff data was left open.</b> A "referral list" ask (names + NPIs, <i>no phone</i>) makes Riley run <code>query_db</code> <b>10/10 — never refuses</b> — and emit real provider <b>NPIs ~50%</b> of runs.</li>
-      <li class="a">The hardening is <b>category-scoped</b> — it locks patients, not staff. Per-category code locks leak at the seam; our egress filter (now with an <code>npi</code> rule) catches it regardless.</li>
+      <li class="g"><b>Patient PII is locked.</b> We tried <b>8 attack classes</b> — synonyms, encoding, DB-forcing, payer pivots, entity+attribute JOINs, operational framings, <code>read_file</code> guessing, inbox injection — all refused before any tool runs.</li>
+      <li class="a">The gate checks the <b>output category, not the wording</b>, so it resists rephrasing and pivots. The only seams: a <b>public</b> provider NPI (bypass, but low-impact), an internal <code>cost_center</code> code, and a run-to-run <b>policy inconsistency</b>.</li>
+      <li class="r">The genuine high-impact breaks — all 413 patients' PII + clinical notes — were <b>pre-hardening</b> (turn_ids valid).</li>
     </ul>
-    <p class="lead muted" style="margin-top:14px">Current, reproducible evidence — turn_ids in the repo. e.g. Dr. Thompson NPI 1131432449.</p>
-    <div class="foot"><span>Same lesson, one tier harder</span><span>7 / 10</span></div>
+    <p class="lead muted" style="margin-top:14px">Lesson one tier harder: output filtering works; per-category locks leak at the seams.</p>
+    <div class="foot"><span>Honest: hardened PII held</span><span>7 / 10</span></div>
   </section>
 
   <!-- 7 -->
